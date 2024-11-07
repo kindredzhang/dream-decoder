@@ -7,7 +7,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Moon, Sun } from 'lucide-react'
-import { format } from 'date-fns'
 
 const ThemeToggle: React.FC<{ isDark: boolean; onToggle: () => void }> = ({ isDark, onToggle }) => (
   <Button variant="outline" size="icon" onClick={onToggle} className="absolute top-4 right-4">
@@ -15,22 +14,39 @@ const ThemeToggle: React.FC<{ isDark: boolean; onToggle: () => void }> = ({ isDa
   </Button>
 )
 
-const WelcomeScreen: React.FC<{ onStart: () => void }> = ({ onStart }) => (
-  <Card className="bg-opacity-30 backdrop-blur-md bg-primary/20 border-primary/50 text-center p-8">
-    <CardHeader>
-      <CardTitle className="text-4xl font-bold text-primary">Welcome to DreamScape Oracles</CardTitle>
-      <CardDescription className="text-xl text-primary/80">
-        {format(new Date(), "MMMM d, yyyy")}
-      </CardDescription>
-    </CardHeader>
-    <CardContent>
-      <p className="text-lg mb-6 text-primary/90">May your dreams reveal the wisdom of the cosmos.</p>
-      <Button onClick={onStart} className="bg-primary text-primary-foreground hover:bg-primary/90">
-        Start Your Journey
-      </Button>
-    </CardContent>
-  </Card>
-)
+const WelcomeScreen: React.FC<{ onStart: () => void }> = ({ onStart }) => {
+  const [formattedDate, setFormattedDate] = useState<string>('')
+
+  useEffect(() => {
+    // Only format date on client-side
+    const today = new Date()
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    })
+    setFormattedDate(formatter.format(today))
+  }, [])
+
+  return (
+    <Card className="bg-opacity-30 backdrop-blur-md bg-primary/20 border-primary/50 text-center p-8">
+      <CardHeader>
+        <CardTitle className="text-4xl font-bold text-primary">Welcome to DreamScape Oracles</CardTitle>
+        {formattedDate && (
+          <CardDescription className="text-xl text-primary/80">
+            {formattedDate}
+          </CardDescription>
+        )}
+      </CardHeader>
+      <CardContent>
+        <p className="text-lg mb-6 text-primary/90">May your dreams reveal the wisdom of the cosmos.</p>
+        <Button onClick={onStart} className="bg-primary text-primary-foreground hover:bg-primary/90">
+          Start Your Journey
+        </Button>
+      </CardContent>
+    </Card>
+  )
+}
 
 // Add these type definitions before the component
 type SubcategoryInterpretations = {
